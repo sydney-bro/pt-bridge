@@ -8,8 +8,11 @@
     "start": "next start"
   },
   "dependencies": {
+    "@layerzerolabs/lz-v2-utilities": "^2.3.35",
     "@rainbow-me/rainbowkit": "^2.1.4",
     "@tanstack/react-query": "^5.51.11",
+    "ethers": "^6.13.2",
+    "hardhat": "^2.22.8",
     "next": "^14.2.3",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
