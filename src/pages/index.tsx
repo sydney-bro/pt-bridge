@@ -7,7 +7,8 @@ import styles from '../styles/Home.module.css';
 
 import { useState } from 'react';
 
-import { useBridgePointless } from '../hooks/useContract';
+import { useBridgePointless, useTotalCustomFees } from '../hooks/useBridgePointless';
+import { useStorageAt } from 'wagmi';
 
 export
   default function
@@ -18,7 +19,8 @@ export
   const [loading, setLoading] = useState(false);
 
   const bridgePointless = useBridgePointless(number);
-
+  
+  const totalCustomFees = useTotalCustomFees();
 
 
   const
@@ -34,6 +36,7 @@ export
         setLoading(true);
         try {
           console.log(Number(number))
+          console.log(await totalCustomFees());
           await bridgePointless(Number(number));
         } catch (err) {
           //console.error(err);
@@ -79,6 +82,7 @@ export
           <h1>Pointless bridge</h1>
           <p>Important: Ensure you have enough ptless tokens(CA: 0x427C2E7F6ad74c124CD6F33E317891D26fB38efe) approved to be spent by the bridge contract(CA: 0x57Dd4Fea22E2344f6C7f6d3185C130c6B2E17a1C)</p>
           <p>Select Polygon network in the drop down above</p>
+          
           <input
 
             type="number"
