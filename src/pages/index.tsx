@@ -7,7 +7,7 @@ import styles from '../styles/Home.module.css';
 
 import { useState } from 'react';
 
-import { useBridgePointless, useTotalCustomFees } from '../hooks/useBridgePointless';
+import { useApprovePointless, useBridgePointless, useTotalCustomFees } from '../hooks/useBridgePointless';
 import { useStorageAt } from 'wagmi';
 
 export
@@ -22,6 +22,8 @@ export
   
   const totalCustomFees = useTotalCustomFees();
 
+  const approvePointless = useApprovePointless(number);
+
 
   const
     handleChange = (e) => {
@@ -35,7 +37,7 @@ export
     handleSubmit = async () => {
         setLoading(true);
         try {
-          console.log(Number(number))
+          console.log(Number(number));
           console.log(await totalCustomFees());
           await bridgePointless(Number(number));
         } catch (err) {
@@ -46,6 +48,21 @@ export
 
       };
 
+  const
+    handleApprove = async () => {
+        setLoading(true);
+        try {
+          console.log(Number(number));
+
+          await approvePointless(Number(number));
+          
+        } catch (err) {
+          //console.error(err);
+        } finally {
+          setLoading(false);
+        }
+
+      };
   return (
 
     <div
@@ -80,7 +97,6 @@ export
         <div>
 
           <h1>Pointless bridge</h1>
-          <p>Important: Ensure you have enough ptless tokens(CA: 0x427C2E7F6ad74c124CD6F33E317891D26fB38efe) approved to be spent by the bridge contract(CA: 0x57Dd4Fea22E2344f6C7f6d3185C130c6B2E17a1C)</p>
           <p>Select Polygon network in the drop down above</p>
           
           <input
@@ -96,16 +112,28 @@ export
           />
 
           <button
+            onClick={handleApprove}
+            disabled={loading}>
+
+            {loading
+              ?
+              'Processing...' :
+              'Approve'}
+
+          </button>
+
+          <button
             onClick={handleSubmit}
             disabled={loading}>
 
             {loading
               ?
               'Processing...' :
-              'Submit'}
+              'Send'}
 
           </button>
-
+          
+         
         </div>
 
 
