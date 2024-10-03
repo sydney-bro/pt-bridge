@@ -26,7 +26,7 @@ export
 
 
   const
-    handleChange = (e) => {
+    handleChange = (e: React.ChangeEvent<any>) => {
       //console.log(e.target.value);
       setNumber(e.target.value);
     };
