@@ -113,6 +113,7 @@ export
 
           <button
             onClick={handleApprove}
+            className={styles.customButton}
             disabled={loading}>
 
             {loading
@@ -124,6 +125,7 @@ export
 
           <button
             onClick={handleSubmit}
+            className={styles.customButton}
             disabled={loading}>
 
             {loading

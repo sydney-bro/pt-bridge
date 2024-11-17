@@ -1,0 +1,80 @@
+/* styles/Games.module.css */
+.container {
+    background-color: #f5f5f5;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.utilityImage {
+    margin-top: 20px;
+}
+
+.main {
+    margin-top: 30px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cardContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    justify-items: center;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    padding: 20px;
+    width: 300px;
+    min-height: 400px; 
+    display: flex;
+    flex-direction: column;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+}
+
+.cardTitle {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.cardImage {
+    width: 80%;
+    height: auto;
+    margin-bottom: 20px;
+    flex-grow: 1; 
+}
+
+.cardButton {
+    background-color: #f38181;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: auto; 
+}
+
+.cardButton:hover {
+    background-color: #e25a5a;
+}
+
+.footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #2c3930;
+    color: white;
+    margin-top: 30px;
+}
