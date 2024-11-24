@@ -78,6 +78,10 @@ export
           {
             alert("please select the source and destination chains...");
           }
+          else if(sourceChain === destinationChain)
+          {
+            alert('Select different source and destination chains...')
+          }
           else if(sourceChain === 'Base')
           {
             bridgeFromBaseToPolygon(Number(number))
