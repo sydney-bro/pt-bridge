@@ -151,7 +151,7 @@ export
           {sourceChain && (
                 <label style={{ color: 'red' }}>
                   Please make sure you switch to {sourceChain} in your wallet.<br />
-                  Ensure you have enough $pointless balance on base. <br />
+                  Ensure you have enough $pointless balance. <br />
                   Approval is required only when bridging from Polygon
                 </label>
               )}
