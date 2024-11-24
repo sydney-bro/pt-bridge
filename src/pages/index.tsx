@@ -1,5 +1,6 @@
 
 import {  ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount, useConnect, useSwitchChain } from 'wagmi';
 
 import Head from 'next/head';
 
@@ -7,7 +8,7 @@ import styles from '../styles/Home.module.css';
 
 import { useState } from 'react';
 
-import { useApprovePointless, useBridgePointless, useTotalCustomFees } from '../hooks/useBridgePointless';
+import { useApprovePointless, useBridgeFromPolygonToBase, useBridgeFromBaseToPolygon, useTotalCustomFees } from '../hooks/useBridgePointless';
 import { useStorageAt } from 'wagmi';
 
 export
@@ -17,13 +18,44 @@ export
   const [number,setNumber] = useState('');
 
   const [loading, setLoading] = useState(false);
+  const [sourceChain, setSourceChain] = useState('');
+  const [destinationChain, setDestinationChain] = useState('');
+  const { isConnected } = useAccount(); // Check if wallet is connected
+  //const { connector } = useConnect();
 
-  const bridgePointless = useBridgePointless(number);
+  //const { switchChain } = useSwitchChain();
+
+  const bridgeFromPolygonToBase = useBridgeFromPolygonToBase(number);
+
+  const bridgeFromBaseToPolygon = useBridgeFromBaseToPolygon(number);
   
   const totalCustomFees = useTotalCustomFees();
 
   const approvePointless = useApprovePointless(number);
+  
+  // Options for the dropdown
+  const chainOptions = ['Base', 'Polygon'];
 
+  // Handle change for source chain
+  const handleSourceChange = (e: React.ChangeEvent<any>) => {
+    const selectedChain = e.target.value;
+    setSourceChain(e.target.value);
+    if (isConnected) {
+      if(selectedChain === "Base")
+      {
+        //switchChain(connector,8453);
+      }
+      else if(selectedChain === "Polygon")
+      {
+        //switchChain(connector, 137);
+      }
+    }
+  };
+
+  // Handle change for destination chain
+  const handleDestinationChange = (e: React.ChangeEvent<any>) => {
+    setDestinationChain(e.target.value);
+  };
 
   const
     handleChange = (e: React.ChangeEvent<any>) => {
@@ -38,10 +70,25 @@ export
         setLoading(true);
         try {
           console.log(Number(number));
-          console.log(await totalCustomFees());
-          await bridgePointless(Number(number));
+          if(number === '')
+          {
+            alert("please enter the amount to transfer");
+          }
+          if(sourceChain === '' || destinationChain === '' )
+          {
+            alert("please select the source and destination chains...");
+          }
+          else if(sourceChain === 'Base')
+          {
+            bridgeFromBaseToPolygon(Number(number))
+          }
+          else if(sourceChain === 'Polygon') 
+          {
+            console.log(await totalCustomFees());
+            await bridgeFromPolygonToBase(Number(number));
+          }
         } catch (err) {
-          //console.error(err);
+          alert(err)
         } finally {
           setLoading(false);
         }
@@ -53,6 +100,11 @@ export
         setLoading(true);
         try {
           console.log(Number(number));
+          console.log(sourceChain);
+          if(sourceChain === "" || destinationChain === "")
+          {
+            alert("please select the source and destination chains...");
+          }
 
           await approvePointless(Number(number));
           
@@ -90,15 +142,49 @@ export
 
       <main
         className={styles.main}>
-
         <ConnectButton
         />
-
+        
         <div>
 
           <h1>Pointless bridge</h1>
-          <p>Select Polygon network in the drop down above</p>
-          
+          {sourceChain && (
+                <label style={{ color: 'red' }}>
+                  Please make sure you switch to {sourceChain} in your wallet.<br />
+                  Ensure you have enough $pointless balance on base. <br />
+                  Approval is required only when bridging from Polygon
+                </label>
+              )}
+        <div>
+        <label htmlFor="source-chain">Source Chain:</label>
+        <select
+          id="source-chain"
+          value={sourceChain}
+          onChange={handleSourceChange}
+        >
+          <option value="">Select Source Chain</option>
+          {chainOptions.map((chain) => (
+            <option key={chain} value={chain}>
+              {chain}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label htmlFor="destination-chain">Destination Chain:</label>
+        <select
+          id="destination-chain"
+          value={destinationChain}
+          onChange={handleDestinationChange}
+        >
+          <option value="">Select Destination Chain</option>
+          {chainOptions.map((chain) => (
+            <option key={chain} value={chain}>
+              {chain}
+            </option>
+          ))}
+        </select>
+      </div>
           <input
 
             type="number"
@@ -111,6 +197,7 @@ export
 
           />
 
+          {sourceChain === 'Polygon' && (
           <button
             onClick={handleApprove}
             className={styles.customButton}
@@ -121,7 +208,7 @@ export
               'Processing...' :
               'Approve'}
 
-          </button>
+          </button>)}
 
           <button
             onClick={handleSubmit}
