@@ -6,7 +6,7 @@ import Head from 'next/head';
 
 import styles from '../styles/Home.module.css';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { useApprovePointless, useBridgeFromPolygonToBase, useBridgeFromBaseToPolygon, useTotalCustomFees } from '../hooks/useBridgePointless';
 import { useStorageAt } from 'wagmi';
@@ -20,21 +20,33 @@ export
   const [loading, setLoading] = useState(false);
   const [sourceChain, setSourceChain] = useState('');
   const [destinationChain, setDestinationChain] = useState('');
+  const [isUsingWalletConnect, setIsUsingWalletConnect] = useState<boolean>(false);
+
+  
   const { isConnected } = useAccount(); // Check if wallet is connected
   //const { connector } = useConnect();
 
   //const { switchChain } = useSwitchChain();
 
-  const bridgeFromPolygonToBase = useBridgeFromPolygonToBase(number);
+  const bridgeFromPolygonToBase = useBridgeFromPolygonToBase(number, isUsingWalletConnect);
 
-  const bridgeFromBaseToPolygon = useBridgeFromBaseToPolygon(number);
+  const bridgeFromBaseToPolygon = useBridgeFromBaseToPolygon(number, isUsingWalletConnect);
   
-  const totalCustomFees = useTotalCustomFees();
+  //const totalCustomFees = useTotalCustomFees();
 
-  const approvePointless = useApprovePointless(number);
+  const approvePointless = useApprovePointless(number,isUsingWalletConnect);
   
   // Options for the dropdown
   const chainOptions = ['Base', 'Polygon'];
+
+  useEffect(() => {
+    console.log('isUsingWalletConnect value:', isUsingWalletConnect);
+  }, [isUsingWalletConnect]);
+  // Function to handle checkbox change
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.checked);
+    setIsUsingWalletConnect(e.target.checked);
+  };
 
   // Handle change for source chain
   const handleSourceChange = (e: React.ChangeEvent<any>) => {
@@ -84,12 +96,12 @@ export
           }
           else if(sourceChain === 'Base')
           {
-            bridgeFromBaseToPolygon(Number(number))
+            bridgeFromBaseToPolygon(Number(number),isUsingWalletConnect)
           }
           else if(sourceChain === 'Polygon') 
           {
-            console.log(await totalCustomFees());
-            await bridgeFromPolygonToBase(Number(number));
+            //console.log(await totalCustomFees());
+            await bridgeFromPolygonToBase(Number(number),isUsingWalletConnect);
           }
         } catch (err) {
           alert(err)
@@ -104,13 +116,14 @@ export
         setLoading(true);
         try {
           console.log(Number(number));
+          console.log(isUsingWalletConnect);
           console.log(sourceChain);
           if(sourceChain === "" || destinationChain === "")
           {
             alert("please select the source and destination chains...");
           }
 
-          await approvePointless(Number(number));
+          await approvePointless(Number(number), isUsingWalletConnect);
           
         } catch (err) {
           //console.error(err);
@@ -142,8 +155,6 @@ export
 
       </Head>
 
-
-
       <main
         className={styles.main}>
         <ConnectButton
@@ -152,9 +163,19 @@ export
         <div>
 
           <h1>Pointless bridge</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+            <input
+              id="wallet-connect"
+              type="checkbox"
+              checked={isUsingWalletConnect}
+              onChange={handleCheckboxChange}
+              style={{ margin: 0, padding: 0, width: '16px', height: '16px', border: '1px solid #000'}}
+              />
+              <label htmlFor="wallet-connect">I'm using wallet-connect</label>
+              </div>
           {sourceChain && (
                 <label style={{ color: 'red' }}>
-                  Please make sure you switch to {sourceChain} in your wallet.<br />
+                 <br /> Please make sure you switch to {sourceChain} in your wallet.<br />
                   Ensure you have enough $pointless balance. <br />
                   Approval is required only when bridging from Polygon
                 </label>
@@ -242,7 +263,7 @@ export
           rel="noopener noreferrer"
           target="_blank">
 
-          Made with ❤️ by your frens at 🌈
+          Made with ❤️ by @sydney-bro
 
         </a>
 

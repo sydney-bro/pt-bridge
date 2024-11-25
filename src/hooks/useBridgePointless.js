@@ -1,11 +1,11 @@
 // hooks/useContract.js
 //import { useContractWrite, usePrepareContractWrite } from 'wagmi';
-//"use client";
 import { Options } from '@layerzerolabs/lz-v2-utilities';
 //import { Address } from 'hardhat-deploy/types';
+import { EthereumProvider } from '@walletconnect/ethereum-provider';
 import { ethers, getBytes, zeroPadValue } from 'ethers';
+import { useAccount } from 'wagmi';
 
-import { custom, useAccount } from 'wagmi';
 
 //import fs from 'fs';
 
@@ -3561,17 +3561,15 @@ const pointlessTokenBaseABI   = [
 ];
 //const pointlessBridgeContractABI  = JSON.parse(fs.readFileSync('../contractABIs/pointlessOftAdapterPolygon.json'));
 
-export function useBridgeFromBaseToPolygon(amountToSend) {
+export function useBridgeFromBaseToPolygon(amountToSend, isUsingWalletConnect) {
     
   const { address, isConnected } = useAccount();
-  const totalCustomFees = useTotalCustomFees();
-  //const { data: walletClient, isError, isLoading } = useWalletClient();
   
-  return async (value) => {
+  return async (value, isUsingWalletConnect) => {
       try {
       
         if(isConnected){
-          const provider = new ethers.BrowserProvider(window.ethereum);
+          const provider = await getProvider(isUsingWalletConnect);
           const signer = await provider.getSigner();  
 
           console.log('Amount to send: ' + amountToSend);
@@ -3624,23 +3622,50 @@ export function useBridgeFromBaseToPolygon(amountToSend) {
   };
 }
 
-export function useBridgeFromPolygonToBase(amountToSend) {
+async function getProvider(isUsingWalletConnect) {
+      try {
+        if (isUsingWalletConnect) {
+          console.log("Creating WalletConnect provider...");
+          const provider = await EthereumProvider.init({
+            projectId: "f05ef59c316622b2776ddebae412831b", // replace with your actual projectId
+            chains: [137, 8453], // Add relevant chains
+            methods: ["personal_sign", "eth_sendTransaction"],
+            showQrModal: true,
+            qrModalOptions: {
+              themeMode: "light",
+            },
+          });
+          const ethersProvider = new ethers.BrowserProvider(provider);
+         return ethersProvider;
+        } else {
+          console.log("Creating BrowserProvider...");
+          const provider = new ethers.BrowserProvider(window.ethereum); // Assuming window.ethereum exists
+          return provider;
+        }
+      } catch (err) {
+        console.error("Something went wrong...", err);
+        }
+    }
+
+export function useBridgeFromPolygonToBase(amountToSend, isUsingWalletConnect) {
     
     const { address, isConnected } = useAccount();
+    //const { data: signer } = useSigner(); 
+    //const { provider } = useProvider();
     const totalCustomFees = useTotalCustomFees();
     //const { data: walletClient, isError, isLoading } = useWalletClient();
     
-    return async (value) => {
+    return async (value, isUsingWalletConnect) => {
         try {
         
           if(isConnected){
-            const provider = new ethers.BrowserProvider(window.ethereum);
+            const provider = await getProvider(isUsingWalletConnect);
             const signer = await provider.getSigner();  
 
             console.log('Amount to send: ' + amountToSend);
             const eidB = 30184;
             const tokensToSend = ethers.parseEther(amountToSend);
-            const customFees = await totalCustomFees();
+            const customFees = await totalCustomFees(provider);
             
             const tokensToReceive = tokensToSend - customFees;
             console.log('Amount to receive: ' + tokensToReceive);
@@ -3686,11 +3711,11 @@ export function useBridgeFromPolygonToBase(amountToSend) {
     };
   }
 
- export function useTotalCustomFees() {
+ export function useTotalCustomFees(provider) {
   
-  return async () => {
+  return async (provider) => {
     try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
+      //const provider = await getProvider(isUsingWalletConnect);
       const signer = await provider.getSigner();  
       const contract = new ethers.Contract(pointlessBridgeContract, pointlessBridgeContractABI, signer);
       const bridgeFeeBurned = await contract.bridgeFeeBurned();
@@ -3707,17 +3732,20 @@ export function useBridgeFromPolygonToBase(amountToSend) {
   }
 }
 
-export function useApprovePointless(amountToApprove) {
+export function useApprovePointless(amountToApprove, isUsingWalletConnect) {
 
   const { address, isConnected } = useAccount();
-
-  return async (value) => {
+  
+  return async (value, isUsingWalletConnect) => {
     try {
       if(isConnected) {
-        const provider = new ethers.BrowserProvider(window.ethereum);
-        const signer = await provider.getSigner();  
+        console.log(isUsingWalletConnect);
+        const provider = await getProvider(isUsingWalletConnect);
+        const signer = await provider.getSigner();
+        //console.log(provider.signer);
         const contract = new ethers.Contract(pointlessTokenPolygonContract, pointlessTokenPolygonABI, signer);
         
+        console.log(amountToApprove);
         const tokensToApprove = ethers.parseEther(amountToApprove);
         contract.approve(pointlessBridgeContract,tokensToApprove);
       }
