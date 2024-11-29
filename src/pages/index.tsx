@@ -8,7 +8,7 @@ import styles from '../styles/Home.module.css';
 
 import { useState, useEffect } from 'react';
 
-import { useApprovePointless, useBridgeFromPolygonToBase, useBridgeFromBaseToPolygon, useTotalCustomFees } from '../hooks/useBridgePointless';
+import { useApprovePointless, useBridgeFromPolygonToBase, useBridgeFromBaseToPolygon, useTotalCustomFees, useBridgeFromBaseToZkSync } from '../hooks/useBridgePointless';
 import { useStorageAt } from 'wagmi';
 
 export
@@ -32,12 +32,13 @@ export
 
   const bridgeFromBaseToPolygon = useBridgeFromBaseToPolygon(number, isUsingWalletConnect);
   
+  const bridgeFromBaseToZkSync = useBridgeFromBaseToZkSync(number, isUsingWalletConnect);
   //const totalCustomFees = useTotalCustomFees();
 
   const approvePointless = useApprovePointless(number,isUsingWalletConnect);
   
   // Options for the dropdown
-  const chainOptions = ['Base', 'Polygon'];
+  const chainOptions = ['Base', 'Polygon', 'zkSync'];
 
   useEffect(() => {
     console.log('isUsingWalletConnect value:', isUsingWalletConnect);
@@ -92,11 +93,19 @@ export
           }
           else if(sourceChain === destinationChain)
           {
-            alert('Select different source and destination chains...')
+            alert('Select different source and destination chains...');
           }
-          else if(sourceChain === 'Base')
+          else if(sourceChain === 'zkSync' || destinationChain === 'zkSync') 
           {
-            bridgeFromBaseToPolygon(Number(number),isUsingWalletConnect)
+            alert('The bridging from/To zkSync is not currently available, it will be added in coming weeks...');
+          }
+          else if(sourceChain === 'Base' && destinationChain === 'Polygon')
+          {
+            bridgeFromBaseToPolygon(Number(number),isUsingWalletConnect);
+          }
+          else if(sourceChain === 'Base' && destinationChain === 'zkSync')
+          {
+            bridgeFromBaseToZkSync(Number(number),isUsingWalletConnect);
           }
           else if(sourceChain === 'Polygon') 
           {
@@ -159,6 +168,14 @@ export
         className={styles.main}>
         <ConnectButton
         />
+        <aside className="side-panel">
+                <p>
+                  Important:<br/>
+                  - Please make sure you are on the right network, for example: if bridging from base, select base network in your wallet.<br />
+                  - Ensure you have enough $pointless balance. <br />
+                  - Approval is required only when bridging from Polygon
+                  </p>
+      </aside> 
         
         <div>
 
@@ -173,13 +190,6 @@ export
               />
               <label htmlFor="wallet-connect">I'm using wallet-connect</label>
               </div>
-          {sourceChain && (
-                <label style={{ color: 'red' }}>
-                 <br /> Please make sure you switch to {sourceChain} in your wallet.<br />
-                  Ensure you have enough $pointless balance. <br />
-                  Approval is required only when bridging from Polygon
-                </label>
-              )}
         <div>
         <label htmlFor="source-chain">Source Chain:</label>
         <select
