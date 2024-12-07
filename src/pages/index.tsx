@@ -8,7 +8,7 @@ import styles from '../styles/Home.module.css';
 
 import { useState, useEffect } from 'react';
 
-import { useApprovePointless, useBridgeFromPolygonToBase, useBridgeFromBaseToPolygon, useTotalCustomFees, useBridgeFromBaseToZkSync } from '../hooks/useBridgePointless';
+import { useApprovePointless, useBridgeFromPolygonToBase, useBridgeFromBaseToPolygon, useTotalCustomFees, useBridgeFromBaseToZkSync, useBridgeFromZksyncToBase } from '../hooks/useBridgePointless';
 import { useStorageAt } from 'wagmi';
 
 export
@@ -33,6 +33,8 @@ export
   const bridgeFromBaseToPolygon = useBridgeFromBaseToPolygon(number, isUsingWalletConnect);
   
   const bridgeFromBaseToZkSync = useBridgeFromBaseToZkSync(number, isUsingWalletConnect);
+
+  const bridgeFromZkSyncToBase = useBridgeFromZksyncToBase(number, isUsingWalletConnect);
   //const totalCustomFees = useTotalCustomFees();
 
   const approvePointless = useApprovePointless(number,isUsingWalletConnect);
@@ -95,10 +97,10 @@ export
           {
             alert('Select different source and destination chains...');
           }
-          else if(sourceChain === 'zkSync' || destinationChain === 'zkSync') 
-          {
-            alert('The bridging from/To zkSync is not currently available, it will be added in coming weeks...');
-          }
+          // else if(sourceChain === 'zkSync' || destinationChain === 'zkSync') 
+          // {
+          //   alert('The bridging from/To zkSync is not currently available, it will be added in coming weeks...');
+          // }
           else if(sourceChain === 'Base' && destinationChain === 'Polygon')
           {
             bridgeFromBaseToPolygon(Number(number),isUsingWalletConnect);
@@ -106,6 +108,10 @@ export
           else if(sourceChain === 'Base' && destinationChain === 'zkSync')
           {
             bridgeFromBaseToZkSync(Number(number),isUsingWalletConnect);
+          }
+          else if(sourceChain === 'zkSync' && destinationChain === 'Base')
+          {
+            bridgeFromZkSyncToBase(Number(number),isUsingWalletConnect);
           }
           else if(sourceChain === 'Polygon') 
           {
