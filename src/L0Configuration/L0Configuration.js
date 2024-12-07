@@ -1,4 +1,7 @@
 import { getProvider } from "../Utils/utils.js"
+import { Options } from '@layerzerolabs/lz-v2-utilities';
+import { ethers, getBytes, zeroPadValue } from 'ethers';
+import { useAccount } from 'wagmi';
 
 import 
 { pointlessTokenBaseContract, pointlessTokenBaseABI, pointlessTokenZkContract, pointlessTokenZkABI, 
@@ -38,7 +41,7 @@ export async function setZkEnforcedOptions()
       
       const options = Options.newOptions().addExecutorLzReceiveOption(200000, 0).toHex().toString();
       const contract = new ethers.Contract(pointlessTokenZkContract, pointlessTokenZkABI, signer);
-          
+      //const contract = new ethers.Contract("0x1925505972D63b69212B6021C2dBe6bA794222F3", pointlessTokenZkABI, signer);
           if(contract){
             const tx = await contract.setEnforcedOptions([{eid: 30109,msgType: 1,options: options}]);
             console.log('Transaction sent: ' + tx.hash);
@@ -54,6 +57,32 @@ export async function setZkEnforcedOptions()
     console.error("[setZkEnforcedOptions]:Something went wrong...", err);
     }
 }
+
+export async function setPolygonEnforcedOptions()
+{
+  try {
+      const provider = await getProvider(false);
+      const signer = await provider.getSigner();  
+      
+      const options = Options.newOptions().addExecutorLzReceiveOption(200000, 0).toHex().toString();
+      //const contract = new ethers.Contract(pointlessTokenZkContract, pointlessTokenZkABI, signer);
+      const contract = new ethers.Contract("0x2870517810d1B832942616F8A59Fc6f78C8F7D29", pointlessBridgeContractABI, signer);
+          if(contract){
+            const tx = await contract.setEnforcedOptions([{eid: 30165,msgType: 1,options: options}]);
+            console.log('Transaction sent: ' + tx.hash);
+            const receipt = await tx.wait();
+            console.log('Transaction confirmed: ' + receipt);
+          }
+          else {
+            console.log('Some problem with contract initialization');
+        }
+    
+  }
+  catch (err) {
+    console.error("[setZkEnforcedOptions]:Something went wrong...", err);
+    }
+}
+
 export async function setPeerOnPolygon()
 {
   try {

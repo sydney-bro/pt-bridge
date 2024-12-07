@@ -8,6 +8,8 @@ import
 
 import { getProvider } from "../Utils/utils.js"
 
+import { setPolygonEnforcedOptions} from "../L0Configuration/L0Configuration.js"
+
 export function useBridgeFromBaseToPolygon(amountToSend, isUsingWalletConnect) {
     
   const { address, isConnected } = useAccount();
@@ -198,6 +200,71 @@ export function useBridgeFromZksyncToBase(amountToSend, isUsingWalletConnect) {
   };
 }
 
+export function useBridgeFromZksyncToPolygon(amountToSend, isUsingWalletConnect) {
+  
+
+  const { address, isConnected } = useAccount();
+  
+  return async (value, isUsingWalletConnect) => {
+      try {
+      
+        if(isConnected){
+          const provider = await getProvider(isUsingWalletConnect);
+          const signer = await provider.getSigner();  
+
+          console.log('Amount to send: ' + amountToSend);
+          const eidB = 30109;
+          const tokensToSend = ethers.parseEther(amountToSend);
+          //const customFees = await totalCustomFees();
+          
+          //const tokensToReceive = tokensToSend - customFees;
+          const tokensToReceive = tokensToSend;
+          console.log('Amount to receive(18 decimals): ' + tokensToReceive);
+          
+          const addressBytes = getBytes(signer.address);
+          const paddedAddress = zeroPadValue(addressBytes, 32);
+          // Defining extra message execution options for the send operation
+          const options = Options.newOptions().addExecutorLzReceiveOption(200000, 0).toHex().toString();
+
+          console.log(options);
+          console.log(ethers);
+          const sendParam = [
+              eidB,
+              paddedAddress,
+              tokensToSend,
+              tokensToReceive,
+              options,
+              '0x',
+              '0x',
+          ]
+
+          const contract = new ethers.Contract(pointlessTokenZkContract, pointlessTokenZkABI, signer);
+          
+          if(contract){
+              const [nativeFee] = await contract.quoteSend(sendParam, false);
+              console.log('native fee: ' + nativeFee);
+              const tx = await contract.send(sendParam, [nativeFee,0], signer.address , { value: nativeFee});
+              console.log('Transaction sent: ' + tx.hash);
+              const receipt = await tx.wait();
+              console.log('Transaction confirmed: ' + receipt);
+          }
+          else {
+              console.log('Some problem with contract initialization');
+          }
+      }
+      else
+      {
+        console.log('Wallet not connected');
+      }
+      
+      } catch (err) {
+      
+         console.error('Transaction failed', err);
+         //alert('Transaction failed');
+    }
+  };
+}
+
 export function useBridgeFromPolygonToBase(amountToSend, isUsingWalletConnect) {
     
     const { address, isConnected } = useAccount();
@@ -235,6 +302,74 @@ export function useBridgeFromPolygonToBase(amountToSend, isUsingWalletConnect) {
                 '0x',
             ]
 
+            const contract = new ethers.Contract(pointlessBridgeContract, pointlessBridgeContractABI, signer);
+            
+            if(contract){
+                const [nativeFee] = await contract.quoteSend(sendParam, false);
+                console.log('native fee: ' + nativeFee);
+                const tx = await contract.send(sendParam, [nativeFee,0], signer.address , { value: nativeFee});
+                console.log('Transaction sent: ' + tx.hash);
+                const receipt = await tx.wait();
+                console.log('Transaction confirmed: ' + receipt);
+            }
+            else {
+                console.log('Some problem with contract initialization');
+            }
+        }
+        else
+        {
+          console.log('Wallet not connected');
+        }
+        
+        } catch (err) {
+        
+           console.error('Transaction failed', err);
+           //alert('Transaction failed');
+      }
+    };
+  }
+
+
+export function useBridgeFromPolygonToZksync(amountToSend, isUsingWalletConnect) {
+
+  const { address, isConnected } = useAccount();
+  const totalCustomFees = useTotalCustomFees();
+    
+    return async (value, isUsingWalletConnect) => {
+        try {
+        
+          if(isConnected){
+            const provider = await getProvider(isUsingWalletConnect);
+            const signer = await provider.getSigner();  
+  
+            console.log('Amount to send: ' + amountToSend);
+            const eidB = 30165;
+            const tokensToSend = ethers.parseEther(amountToSend);
+            //const customFees = await totalCustomFees();
+            
+            const customFees = await totalCustomFees(provider);
+            
+            const tokensToReceive = tokensToSend - customFees;
+
+            console.log('Amount to receive(18 decimals): ' + tokensToReceive);
+            
+            const addressBytes = getBytes(signer.address);
+            const paddedAddress = zeroPadValue(addressBytes, 32);
+            // Defining extra message execution options for the send operation
+            const options = Options.newOptions().addExecutorLzReceiveOption(200000, 0).toHex().toString();
+  
+            console.log(options);
+            console.log(ethers);
+            const sendParam = [
+                eidB,
+                paddedAddress,
+                tokensToSend,
+                tokensToReceive,
+                options,
+                '0x',
+                '0x',
+            ]
+  
             const contract = new ethers.Contract(pointlessBridgeContract, pointlessBridgeContractABI, signer);
             
             if(contract){

@@ -8,8 +8,11 @@ import styles from '../styles/Home.module.css';
 
 import { useState, useEffect } from 'react';
 
-import { useApprovePointless, useBridgeFromPolygonToBase, useBridgeFromBaseToPolygon, useTotalCustomFees, useBridgeFromBaseToZkSync, useBridgeFromZksyncToBase } from '../hooks/useBridgePointless';
-import { useStorageAt } from 'wagmi';
+import { useApprovePointless, useBridgeFromPolygonToBase, useBridgeFromBaseToPolygon, 
+   useBridgeFromBaseToZkSync, useBridgeFromZksyncToBase, useBridgeFromPolygonToZksync, useBridgeFromZksyncToPolygon } 
+  from '../hooks/useBridgePointless';
+
+  import { useStorageAt } from 'wagmi';
 
 export
   default function
@@ -36,6 +39,9 @@ export
 
   const bridgeFromZkSyncToBase = useBridgeFromZksyncToBase(number, isUsingWalletConnect);
   //const totalCustomFees = useTotalCustomFees();
+  const bridgeFromPolygonToZksync = useBridgeFromPolygonToZksync(number, isUsingWalletConnect);
+  
+  const bridgeFromZksyncToPolygon = useBridgeFromZksyncToPolygon(number, isUsingWalletConnect);
 
   const approvePointless = useApprovePointless(number,isUsingWalletConnect);
   
@@ -103,24 +109,28 @@ export
           // }
           else if(sourceChain === 'Base' && destinationChain === 'Polygon')
           {
-            bridgeFromBaseToPolygon(Number(number),isUsingWalletConnect);
+            await bridgeFromBaseToPolygon(Number(number),isUsingWalletConnect);
           }
           else if(sourceChain === 'Base' && destinationChain === 'zkSync')
           {
-            bridgeFromBaseToZkSync(Number(number),isUsingWalletConnect);
+            await bridgeFromBaseToZkSync(Number(number),isUsingWalletConnect);
           }
           else if(sourceChain === 'zkSync' && destinationChain === 'Base')
           {
-            bridgeFromZkSyncToBase(Number(number),isUsingWalletConnect);
+            await bridgeFromZkSyncToBase(Number(number),isUsingWalletConnect);
           }
           else if(sourceChain === 'Polygon' && destinationChain === 'Base') 
           {
             //console.log(await totalCustomFees());
             await bridgeFromPolygonToBase(Number(number),isUsingWalletConnect);
           }
-          else
+          else if(sourceChain === 'Polygon' && destinationChain === 'zkSync') 
           {
-            alert('This path is not yet supported')
+            await bridgeFromPolygonToZksync(Number(number),isUsingWalletConnect);
+          }
+          else if(sourceChain === 'zkSync' && destinationChain === 'Polygon') 
+          {
+            await bridgeFromZksyncToPolygon(Number(number),isUsingWalletConnect);
           }
         } catch (err) {
           alert(err)
