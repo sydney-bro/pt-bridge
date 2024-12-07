@@ -113,10 +113,14 @@ export
           {
             bridgeFromZkSyncToBase(Number(number),isUsingWalletConnect);
           }
-          else if(sourceChain === 'Polygon') 
+          else if(sourceChain === 'Polygon' && destinationChain === 'Base') 
           {
             //console.log(await totalCustomFees());
             await bridgeFromPolygonToBase(Number(number),isUsingWalletConnect);
+          }
+          else
+          {
+            alert('This path is not yet supported')
           }
         } catch (err) {
           alert(err)
