@@ -207,7 +207,9 @@ export
                   - Ensure you have enough $pointless balance. <br />
                   - Approval is required only when bridging from Polygon
                   </p>
-      </aside>
+                  
+          </aside>
+          <br />
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
             <input
               id="wallet-connect"
