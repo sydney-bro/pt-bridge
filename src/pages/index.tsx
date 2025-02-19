@@ -188,18 +188,26 @@ export
         className={styles.main}>
         <ConnectButton
         />
-        <aside className="side-panel">
+        {/* <aside className="side-panel">
                 <p>
                   Important:<br/>
                   - Please make sure you are on the right network, for example: if bridging from base, select base network in your wallet.<br />
                   - Ensure you have enough $pointless balance. <br />
                   - Approval is required only when bridging from Polygon
                   </p>
-      </aside> 
+      </aside>  */}
         
         <div>
 
           <h1>Pointless bridge</h1>
+          <aside className="side-panel">
+                <p>
+                  Important:<br/>
+                  - Please make sure you are on the right network, for example: if bridging from base, select base network in your wallet.<br />
+                  - Ensure you have enough $pointless balance. <br />
+                  - Approval is required only when bridging from Polygon
+                  </p>
+      </aside>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
             <input
               id="wallet-connect"
