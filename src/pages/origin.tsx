@@ -44,7 +44,7 @@ export
       <p>$pointless was born when the official lens handle teased a points program <br />
       <img src="/images/lenspt.jpeg" /> <br />
       Airdrop mania was at its peak and a number of projects launched a points program <br />
-      Most of the points programs turned out to have a farm the farmer objective rather than actual community building <br />
+      Most of the points programs turned out to have a "farm the farmer" objective rather than actual community building <br />
       $pointless was launched as a funny reaction to these devious points programs <br />
       $pointless had a very pointless airdrop with some obvisouly pointless rules <br />
       
