@@ -40,7 +40,7 @@ export
 
         
     <div>
-      <h1>$pointless is the goat(ed) coin of lens protocol</h1>
+      <h1>$pointless is the goat(ed) coin of the Lens protocol</h1>
       <Image
         src="/images/ptgoat.gif"  // Path relative to the public directory
         alt="pointless unigoat with a spinning ball attached to its unihorn..."
