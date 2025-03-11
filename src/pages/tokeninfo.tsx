@@ -5,11 +5,10 @@ import styles from '../styles/Home.module.css';
 import { useState, useEffect } from 'react';
 
 import Link from 'next/link';
-import Image from 'next/image';
 
 export
   default function
-  Home() {
+  TokenInfo() {
 
   return (
 
@@ -28,7 +27,7 @@ export
         />
 
         <link
-          href="/images/favicon.ico"
+          href="images/favicon.ico"
           rel="icon"
         />
 
@@ -40,22 +39,20 @@ export
 
         
     <div>
-      <h1>$pointless is the goat(ed) coin of lens protocol</h1>
-      <Image
-        src="/images/ptgoat.gif"  // Path relative to the public directory
-        alt="pointless unigoat with a spinning ball attached to its unihorn..."
-        width={500}           // Set the width
-        height={500}          // Set the height
-      /> <br />
-      <Link href="/tokeninfo" >
-        <button className={styles.customButton}>Token Info</button>
+      <h2>$pointless Token Info</h2>
+      <p>$pointless has been deployed on Base, Polygon and Zksync chains <br />
+      Below are the pointless token CAs <br />
+      Base: 0xaF13924f23Be104b96c6aC424925357463b0d105 <br />
+      Polygon: 0x9B8cc6320F22325759B7D2CA5CD27347bB4eCD86 <br />
+      Zksync Era: 0xFD21D5E148dF3B93AE6deC416544Fb3d3E21260C</p>
+
+      <Link href="/">
+        <button className={styles.customButton}>Home</button>
       </Link>
-      <Link href="/origin" >
-        <button className={styles.customButton}>Pointless Origins</button>
-      </Link>
-      <Link href="/bridge" >
+      <Link href="/bridge">
         <button className={styles.customButton}>Bridge</button>
       </Link>
+
     </div>
 
 
