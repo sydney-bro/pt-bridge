@@ -5,6 +5,7 @@ import styles from '../styles/Home.module.css';
 import { useState, useEffect } from 'react';
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 export
   default function
@@ -42,7 +43,21 @@ export
       <h2>$pointless Origin Story</h2>
       <aside className="origin-panel" >
       <p>$pointless was born when the official lens handle teased a points program <br />
-      <img src="/images/lenspt.jpeg" /> <br />
+      <Image
+        src="/images/lenspt.jpeg"  // Path relative to the public directory
+        alt="when lens teased points..."
+        layout="intrinsic"
+        
+        width={792}           // Set the width
+        height={253}          // Set the height
+        style={{ 
+          maxWidth: '80vw', 
+          maxHeight: '50vh',
+          width: 'auto',
+          height: 'auto'
+         }}
+      />
+      <br />
       Airdrop mania was at its peak and a number of projects launched a points program <br />
       Most of the points programs turned out to have a "farm the farmer" objective rather than actual community building <br />
       $pointless was launched as a funny reaction to these devious points programs <br />
