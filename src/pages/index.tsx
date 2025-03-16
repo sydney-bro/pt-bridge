@@ -44,8 +44,16 @@ export
       <Image
         src="/images/ptgoat.gif"  // Path relative to the public directory
         alt="pointless unigoat with a spinning ball attached to its unihorn..."
-        width={500}           // Set the width
-        height={500}          // Set the height
+        layout="intrinsic"
+        
+        width={720}           // Set the width
+        height={720}          // Set the height
+        style={{ 
+          maxWidth: '80vw', 
+          maxHeight: '50vh',
+          width: 'auto',
+          height: 'auto'
+         }}
       /> <br />
       <Link href="/tokeninfo" >
         <button className={styles.customButton}>Token Info</button>
