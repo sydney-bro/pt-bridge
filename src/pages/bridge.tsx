@@ -144,6 +144,10 @@ export
           {
             await bridgeFromLensToBase(Number(number),isUsingWalletConnect);
           }
+          else
+          {
+            alert("Path not available");
+          }
         } catch (err) {
           alert(err)
         } finally {
