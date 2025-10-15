@@ -3,24 +3,30 @@ import { ethers, getBytes, zeroPadValue } from 'ethers';
 import { useAccount } from 'wagmi';
 import 
 { pointlessTokenBaseContract, pointlessTokenBaseABI, pointlessTokenZkContract, pointlessTokenZkABI, 
-  pointlessBridgeContract, pointlessBridgeContractABI, pointlessTokenPolygonContract, pointlessTokenPolygonABI } 
+  pointlessBridgeContract, pointlessBridgeContractABI, pointlessTokenPolygonContract, pointlessTokenPolygonABI,
+  pointlessTokenLensContract, pointlessTokenLensABI } 
   from '../contractABIs/pointlessAbis.js'
 
 import { getProvider } from "../Utils/utils.js"
 
-import { setPolygonEnforcedOptions} from "../L0Configuration/L0Configuration.js"
+import { setLensEnforcedOptions,getPaddedAddress, setPeerBaseToLens, setPeerLensToBase, setBaseToLensEnforcedOptions } from "../L0Configuration/L0Configuration.js"
 
 export function useBridgeFromBaseToPolygon(amountToSend, isUsingWalletConnect) {
     
   const { address, isConnected } = useAccount();
-  
+  // setPeerBaseToLens();
+  // return;
+
   return async (value, isUsingWalletConnect) => {
       try {
       
         if(isConnected){
+          //setBaseToLensEnforcedOptions();
+          //return;
           const provider = await getProvider(isUsingWalletConnect);
           const signer = await provider.getSigner();  
-
+          
+          
           console.log('Amount to send: ' + amountToSend);
           const eidB = 30109;
           const tokensToSend = ethers.parseEther(amountToSend);
@@ -396,6 +402,133 @@ export function useBridgeFromPolygonToZksync(amountToSend, isUsingWalletConnect)
       }
     };
   }
+
+export function useBridgeFromBaseToLens(amountToSend, isUsingWalletConnect) {
+  
+
+  const { address, isConnected } = useAccount();
+  
+  return async (value, isUsingWalletConnect) => {
+      try {
+      
+        if(isConnected){
+          
+          const provider = await getProvider(isUsingWalletConnect);
+          const signer = await provider.getSigner();  
+
+          console.log('Amount to send: ' + amountToSend);
+          const eidB = 30373;
+          const tokensToSend = ethers.parseEther(amountToSend);
+          //const customFees = await totalCustomFees();
+          
+          //const tokensToReceive = tokensToSend - customFees;
+          const tokensToReceive = tokensToSend;
+          console.log('Amount to receive(18 decimals): ' + tokensToReceive);
+          
+          const addressBytes = getBytes(signer.address);
+          const paddedAddress = zeroPadValue(addressBytes, 32);
+          // Defining extra message execution options for the send operation
+          const options = Options.newOptions().addExecutorLzReceiveOption(200000, 0).toHex().toString();
+          console.log(options);
+          const sendParam = [
+              eidB,
+              paddedAddress,
+              tokensToSend,
+              tokensToReceive,
+              options,
+              '0x',
+              '0x',
+          ]
+
+          const contract = new ethers.Contract(pointlessTokenBaseContract, pointlessTokenBaseABI, signer);
+          
+          if(contract){
+              const [nativeFee] = await contract.quoteSend(sendParam, false);
+              console.log('native fee: ' + nativeFee);
+              const tx = await contract.send(sendParam, [nativeFee,0], signer.address , { value: nativeFee});
+              console.log('Transaction sent: ' + tx.hash);
+              const receipt = await tx.wait();
+              console.log('Transaction confirmed: ' + receipt);
+          }
+          else {
+              console.log('Some problem with contract initialization');
+          }
+      }
+      else
+      {
+        console.log('Wallet not connected');
+      }
+      
+      } catch (err) {
+      
+         console.error('Transaction failed', err);
+         //alert('Transaction failed');
+    }
+  };
+}
+
+export function useBridgeFromLensToBase(amountToSend, isUsingWalletConnect) {
+  const { address, isConnected } = useAccount();
+  
+  return async (value, isUsingWalletConnect) => {
+      try {
+      
+        if(isConnected){
+          
+          const provider = await getProvider(isUsingWalletConnect);
+          const signer = await provider.getSigner();  
+
+          console.log('Amount to send: ' + amountToSend);
+          const eidB = 30184;
+          const tokensToSend = ethers.parseEther(amountToSend);
+          //const customFees = await totalCustomFees();
+          
+          //const tokensToReceive = tokensToSend - customFees;
+          const tokensToReceive = tokensToSend;
+          console.log('Amount to receive(18 decimals): ' + tokensToReceive);
+          
+          const addressBytes = getBytes(signer.address);
+          const paddedAddress = zeroPadValue(addressBytes, 32);
+          // Defining extra message execution options for the send operation
+          const options = Options.newOptions().addExecutorLzReceiveOption(200000, 0).toHex().toString();
+          console.log(options);
+          const sendParam = [
+              eidB,
+              paddedAddress,
+              tokensToSend,
+              tokensToReceive,
+              options,
+              '0x',
+              '0x',
+          ]
+
+          const contract = new ethers.Contract(pointlessTokenLensContract, pointlessTokenLensABI, signer);
+          
+          if(contract){
+              const [nativeFee] = await contract.quoteSend(sendParam, false);
+              console.log('native fee: ' + nativeFee);
+              const tx = await contract.send(sendParam, [nativeFee,0], signer.address , { value: nativeFee});
+              console.log('Transaction sent: ' + tx.hash);
+              const receipt = await tx.wait();
+              alert('Transaction sent: https://layerzeroscan.com/tx/' + tx.hash);
+              console.log('Transaction confirmed: ' + receipt);
+          }
+          else {
+              console.log('Some problem with contract initialization');
+          }
+      }
+      else
+      {
+        console.log('Wallet not connected');
+      }
+      
+      } catch (err) {
+      
+         console.error('Transaction failed', err);
+         alert('Transaction failed, please check instructions and try again');
+    }
+  };
+}
 
  export function useTotalCustomFees(provider) {
   

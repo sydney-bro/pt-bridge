@@ -5,7 +5,9 @@ import { useAccount } from 'wagmi';
 
 import 
 { pointlessTokenBaseContract, pointlessTokenBaseABI, pointlessTokenZkContract, pointlessTokenZkABI, 
-  pointlessBridgeContract, pointlessBridgeContractABI } 
+  pointlessBridgeContract, pointlessBridgeContractABI, 
+  pointlessTokenLensContract,
+  pointlessTokenLensABI} 
 from '../contractABIs/pointlessAbis.js'
 
 export async function setBaseEnforcedOptions()
@@ -83,6 +85,56 @@ export async function setPolygonEnforcedOptions()
     }
 }
 
+export async function setLensEnforcedOptions()
+{
+  try {
+      const provider = await getProvider(false);
+      const signer = await provider.getSigner();  
+      
+      const options = Options.newOptions().addExecutorLzReceiveOption(200000, 0).toHex().toString();
+      //const contract = new ethers.Contract(pointlessTokenZkContract, pointlessTokenZkABI, signer);
+      const contract = new ethers.Contract(pointlessTokenLensContract, pointlessTokenLensABI, signer);
+          if(contract){
+            const tx = await contract.setEnforcedOptions([{eid: 30184,msgType: 1,options: options}]);
+            console.log('Transaction sent: ' + tx.hash);
+            const receipt = await tx.wait();
+            console.log('Transaction confirmed: ' + receipt);
+          }
+          else {
+            console.log('Some problem with contract initialization');
+        }
+    
+  }
+  catch (err) {
+    console.error("[setZkEnforcedOptions]:Something went wrong...", err);
+    }
+}
+
+export async function setBaseToLensEnforcedOptions()
+{
+  try {
+      const provider = await getProvider(false);
+      const signer = await provider.getSigner();  
+      
+      const options = Options.newOptions().addExecutorLzReceiveOption(200000, 0).toHex().toString();
+      //const contract = new ethers.Contract(pointlessTokenZkContract, pointlessTokenZkABI, signer);
+      const contract = new ethers.Contract(pointlessTokenBaseContract, pointlessTokenBaseABI, signer);
+          if(contract){
+            const tx = await contract.setEnforcedOptions([{eid: 30373,msgType: 1,options: options}]);
+            console.log('Transaction sent: ' + tx.hash);
+            const receipt = await tx.wait();
+            console.log('Transaction confirmed: ' + receipt);
+          }
+          else {
+            console.log('Some problem with contract initialization');
+        }
+    
+  }
+  catch (err) {
+    console.error("[setZkEnforcedOptions]:Something went wrong...", err);
+    }
+}
+
 export async function setPeerOnPolygon()
 {
   try {
@@ -107,8 +159,67 @@ export async function setPeerOnPolygon()
     console.error("[setPolygonEnforcedOptions]:Something went wrong...", err);
     }
 }
+export async function setPeerLensToBase()
+{
+  try {
+      const provider = await getProvider(false);
+      const signer = await provider.getSigner();  
+      
+      const options = Options.newOptions().addExecutorLzReceiveOption(200000, 0).toHex().toString();
+      const contract = new ethers.Contract(pointlessTokenLensContract, pointlessTokenLensABI, signer);
+      const paddedAddress = zeroPadValue('0xaF13924f23Be104b96c6aC424925357463b0d105', 32)          
+          if(contract){
+            const tx = await contract.setPeer(30184,paddedAddress);
+            console.log('Transaction sent: ' + tx.hash);
+            const receipt = await tx.wait();
+            console.log('Transaction confirmed: ' + receipt);
+          }
+          else {
+            console.log('Some problem with contract initialization');
+        }
+    
+  }
+  catch (err) {
+    console.error("[setPeerLensToBase]:Something went wrong...", err);
+    }
+}
 
-export async function setBaseL0Config()
+export async function getPaddedAddress()
+{
+  try {
+    const paddedAddress = zeroPadValue('0xaF13924f23Be104b96c6aC424925357463b0d105', 32)   
+    console.log(paddedAddress);
+  }
+  catch (err) {
+  console.error("[getPaddedAddress]:Something went wrong...", err);
+  }
+}
+export async function setPeerBaseToLens()
+{
+  try {
+      const provider = await getProvider(false);
+      const signer = await provider.getSigner();  
+      
+      //const options = Options.newOptions().addExecutorLzReceiveOption(200000, 0).toHex().toString();
+      const contract = new ethers.Contract(pointlessTokenBaseContract, pointlessTokenBaseABI, signer);
+      const paddedAddress = zeroPadValue('0x2142A24C46f67432c3605dd1CcCbbB4aBFe90E63', 32)   
+          if(contract){
+            const tx = await contract.setPeer(30373,paddedAddress);
+            console.log('Transaction sent: ' + tx.hash);
+            const receipt = await tx.wait();
+            console.log('Transaction confirmed: ' + receipt);
+          }
+          else {
+            console.log('Some problem with contract initialization');
+        }
+    
+  }
+  catch (err) {
+    console.error("[setPeerBaseToLens]:Something went wrong...", err);
+    }
+}
+
+export async function setBaseToLensL0Config()
 {
   try {
     const provider = await getProvider(false);
@@ -129,7 +240,8 @@ export async function setBaseL0Config()
     const contract = new ethers.Contract(layerzeroBaseEndpoint, layerzeroBaseABI, signer);
     console.log(contract);
     if(contract) {
-          const tx = await contract.setConfig('0x9c6d4496bDc6312AB94F1FD4295F59DF6Ed8EeE3','0xB5320B0B3a13cC860893E2Bd79FCd7e13484Dda2',[{eid:30165,configType: 2,config: encodedConfig}]);
+          //const tx = await contract.setConfig('0xaF13924f23Be104b96c6aC424925357463b0d105','0xB5320B0B3a13cC860893E2Bd79FCd7e13484Dda2',[{eid:30373,configType: 2,config: encodedConfig}]);
+          const tx = await contract.setConfig('0xaF13924f23Be104b96c6aC424925357463b0d105','0xc70AB6f32772f59fBfc23889Caf4Ba3376C84bAf',[{eid:30373,configType: 2,config: encodedConfig}]);
           console.log('Transaction sent: ' + tx.hash);
           const receipt = await tx.wait();
           console.log('Transaction confirmed: ' + receipt);
@@ -166,8 +278,8 @@ export async function setPolygonL0Config()
     const contract = new ethers.Contract(layerzeroPolygonEndpoint, endpointAbi, signer);
     console.log(contract);
     if(contract) {
-          //const tx = await contract.setConfig('0xa1EfA1afdCEF2DB851042c6c6FD4Cffb8Fbc7DB0','0x6c26c61a97006888ea9E4FA36584c7df57Cd9dA3',[{eid:30165,configType: 2,config: encodedConfig}]);
-          const tx = await contract.setConfig('0xa1EfA1afdCEF2DB851042c6c6FD4Cffb8Fbc7DB0','0x1322871e4ab09Bc7f5717189434f97bBD9546e95',[{eid:30165,configType: 2,config: encodedConfig}]);
+          const tx = await contract.setConfig('0xa1EfA1afdCEF2DB851042c6c6FD4Cffb8Fbc7DB0','0x6c26c61a97006888ea9E4FA36584c7df57Cd9dA3',[{eid:30165,configType: 2,config: encodedConfig}]);
+          //const tx = await contract.setConfig('0xa1EfA1afdCEF2DB851042c6c6FD4Cffb8Fbc7DB0','0x1322871e4ab09Bc7f5717189434f97bBD9546e95',[{eid:30165,configType: 2,config: encodedConfig}]);
           console.log('Transaction sent: ' + tx.hash);
           const receipt = await tx.wait();
           console.log('Transaction confirmed: ' + receipt);

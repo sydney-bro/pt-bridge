@@ -9,7 +9,8 @@ import styles from '../styles/Home.module.css';
 import { useState, useEffect } from 'react';
 
 import { useApprovePointless, useBridgeFromPolygonToBase, useBridgeFromBaseToPolygon, 
-   useBridgeFromBaseToZkSync, useBridgeFromZksyncToBase, useBridgeFromPolygonToZksync, useBridgeFromZksyncToPolygon } 
+   useBridgeFromBaseToZkSync, useBridgeFromZksyncToBase, useBridgeFromPolygonToZksync, useBridgeFromZksyncToPolygon, useBridgeFromBaseToLens,
+   useBridgeFromLensToBase } 
   from '../hooks/useBridgePointless';
 
 import Link from 'next/link';
@@ -43,10 +44,13 @@ export
   
   const bridgeFromZksyncToPolygon = useBridgeFromZksyncToPolygon(number, isUsingWalletConnect);
 
+  const bridgeFromBaseToLens = useBridgeFromBaseToLens(number, isUsingWalletConnect);
+  const bridgeFromLensToBase = useBridgeFromLensToBase(number, isUsingWalletConnect);
+
   const approvePointless = useApprovePointless(number,isUsingWalletConnect);
   
   // Options for the dropdown
-  const chainOptions = ['Base', 'Polygon', 'zkSync'];
+  const chainOptions = ['Base', 'Polygon', 'zkSync', 'Lens' ];
 
   useEffect(() => {
     console.log('isUsingWalletConnect value:', isUsingWalletConnect);
@@ -131,6 +135,14 @@ export
           else if(sourceChain === 'zkSync' && destinationChain === 'Polygon') 
           {
             await bridgeFromZksyncToPolygon(Number(number),isUsingWalletConnect);
+          }
+          else if(sourceChain === 'Base' && destinationChain === 'Lens') 
+          {
+            await bridgeFromBaseToLens(Number(number),isUsingWalletConnect);
+          }
+          else if(sourceChain === 'Lens' && destinationChain === 'Base') 
+          {
+            await bridgeFromLensToBase(Number(number),isUsingWalletConnect);
           }
         } catch (err) {
           alert(err)
