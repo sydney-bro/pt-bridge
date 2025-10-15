@@ -39,7 +39,6 @@ export
 
         
     <div >
-      <div style={{ overflowX: 'auto', whiteSpace: 'nowrap' }} >
         <h2>$pointless Token Info</h2>
         <p>$pointless has been deployed on Base, Polygon and Zksync chains <br />
         Below are the pointless token CAs <br />
@@ -48,7 +47,6 @@ export
         Lens: 0x2142A24C46f67432c3605dd1CcCbbB4aBFe90E63 <br />
         Polygon: 0x9B8cc6320F22325759B7D2CA5CD27347bB4eCD86 <br />
         Zksync Era: 0xFD21D5E148dF3B93AE6deC416544Fb3d3E21260C</p>
-      </div>
       <Link href="/">
         <button className={styles.customButton}>Home</button>
       </Link>
