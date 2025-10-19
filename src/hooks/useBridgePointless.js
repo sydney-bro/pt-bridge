@@ -59,6 +59,7 @@ export function useBridgeFromBaseToPolygon(amountToSend, isUsingWalletConnect) {
               console.log('Transaction sent: ' + tx.hash);
               const receipt = await tx.wait();
               console.log('Transaction confirmed: ' + receipt);
+              console.log('Track progress here: https://layerzeroscan.com/tx/' + tx.hash);
           }
           else {
               console.log('Some problem with contract initialization');
@@ -123,6 +124,7 @@ export function useBridgeFromBaseToZkSync(amountToSend, isUsingWalletConnect) {
               console.log('Transaction sent: ' + tx.hash);
               const receipt = await tx.wait();
               console.log('Transaction confirmed: ' + receipt);
+              console.log('Track progress here: https://layerzeroscan.com/tx/' + tx.hash);
           }
           else {
               console.log('Some problem with contract initialization');
@@ -188,6 +190,7 @@ export function useBridgeFromZksyncToBase(amountToSend, isUsingWalletConnect) {
               console.log('Transaction sent: ' + tx.hash);
               const receipt = await tx.wait();
               console.log('Transaction confirmed: ' + receipt);
+              console.log('Track progress here: https://layerzeroscan.com/tx/' + tx.hash);
           }
           else {
               console.log('Some problem with contract initialization');
@@ -253,6 +256,7 @@ export function useBridgeFromZksyncToPolygon(amountToSend, isUsingWalletConnect)
               console.log('Transaction sent: ' + tx.hash);
               const receipt = await tx.wait();
               console.log('Transaction confirmed: ' + receipt);
+              console.log('Track progress here: https://layerzeroscan.com/tx/' + tx.hash);
           }
           else {
               console.log('Some problem with contract initialization');
@@ -317,6 +321,7 @@ export function useBridgeFromPolygonToBase(amountToSend, isUsingWalletConnect) {
                 console.log('Transaction sent: ' + tx.hash);
                 const receipt = await tx.wait();
                 console.log('Transaction confirmed: ' + receipt);
+                console.log('Track progress here: https://layerzeroscan.com/tx/' + tx.hash);
             }
             else {
                 console.log('Some problem with contract initialization');
@@ -385,6 +390,7 @@ export function useBridgeFromPolygonToZksync(amountToSend, isUsingWalletConnect)
                 console.log('Transaction sent: ' + tx.hash);
                 const receipt = await tx.wait();
                 console.log('Transaction confirmed: ' + receipt);
+                console.log('Track progress here: https://layerzeroscan.com/tx/' + tx.hash);
             }
             else {
                 console.log('Some problem with contract initialization');
@@ -449,6 +455,7 @@ export function useBridgeFromBaseToLens(amountToSend, isUsingWalletConnect) {
               console.log('Transaction sent: ' + tx.hash);
               const receipt = await tx.wait();
               console.log('Transaction confirmed: ' + receipt);
+              console.log('Track progress here: https://layerzeroscan.com/tx/' + tx.hash);
           }
           else {
               console.log('Some problem with contract initialization');
@@ -510,8 +517,9 @@ export function useBridgeFromLensToBase(amountToSend, isUsingWalletConnect) {
               const tx = await contract.send(sendParam, [nativeFee,0], signer.address , { value: nativeFee});
               console.log('Transaction sent: ' + tx.hash);
               const receipt = await tx.wait();
-              alert('Transaction sent: https://layerzeroscan.com/tx/' + tx.hash);
+              
               console.log('Transaction confirmed: ' + receipt);
+              console.log('Track progress here: https://layerzeroscan.com/tx/' + tx.hash);
           }
           else {
               console.log('Some problem with contract initialization');

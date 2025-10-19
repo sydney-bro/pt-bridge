@@ -3,6 +3,8 @@ import {  ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useConnect, useSwitchChain } from 'wagmi';
 
 import Head from 'next/head';
+import useConsoleCapture from "../hooks/useConsoleCapture";
+import ConsolePanel from "../components/ConsolePanel";
 
 import styles from '../styles/Home.module.css';
 
@@ -51,6 +53,7 @@ export
   
   // Options for the dropdown
   const chainOptions = ['Base', 'Polygon', 'zkSync', 'Lens' ];
+  const logs = useConsoleCapture();
 
   useEffect(() => {
     console.log('isUsingWalletConnect value:', isUsingWalletConnect);
@@ -221,9 +224,8 @@ export
                   Important:<br/>
                   - Please make sure you are on the right network, for example: if bridging from base, select base network in your wallet.<br />
                   - Ensure you have enough $pointless balance. <br />
-                  - Approval is required only when bridging from Polygon
-                  - Bridge to lens is only supported from base. To bridge from Polygon to lens, bridge to base first.
-                  - You can check the status of your bridge transaction on layerzeroscan.com
+                  - Approval is required only when bridging from Polygon <br />
+                  - Bridge to lens is only supported from base. To bridge from Polygon to lens, bridge to base first
                   </p>
                   
           </aside>
@@ -309,7 +311,9 @@ export
           
          
         </div>
-
+        <div>
+          <ConsolePanel logs={logs} />
+        </div>
 
       </main>
 
