@@ -222,6 +222,8 @@ export
                   - Please make sure you are on the right network, for example: if bridging from base, select base network in your wallet.<br />
                   - Ensure you have enough $pointless balance. <br />
                   - Approval is required only when bridging from Polygon
+                  - Bridge to lens is only supported from base. To bridge from Polygon to lens, bridge to base first.
+                  - You can check the status of your bridge transaction on layerzeroscan.com
                   </p>
                   
           </aside>
