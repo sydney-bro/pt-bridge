@@ -9,6 +9,29 @@ export default function ConsolePanel({ logs }) {
     if (isVisible) bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [logs, isVisible]);
 
+    // helper: turns URLs in text into clickable <a> tags
+  const formatMessage = (message) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = message.split(urlRegex);
+
+    return parts.map((part, index) => {
+      if (urlRegex.test(part)) {
+        return (
+          <a
+            key={index}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: "#00bfff", textDecoration: "underline" }}
+          >
+            {part}
+          </a>
+        );
+      }
+      return part;
+    });
+  };
+
   return (
     <div
       style={{
@@ -70,7 +93,7 @@ export default function ConsolePanel({ logs }) {
                       : "#88ff88",
                 }}
               >
-                [{log.type}] {log.message}
+                [{log.type}] {formatMessage(log.message)}
               </div>
             ))
           )}
